@@ -3,7 +3,7 @@
   :url "https://github.com/sveri/clojure-commons"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies []
+  :dependencies [[org.clojure/test.check "0.5.8"]]
   :deploy-repositories [["clojars-self" {:url           "https://clojars.org/repo"
                                          :sign-releases false}]]
   :source-paths ["src"])
