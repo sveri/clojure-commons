@@ -1,6 +1,7 @@
 # clojure-commons
 
-A Clojure library designed to ... well, that part is up to you.
+A Clojure library with some helper functions for my projects.
+Expects datomic >= 0.9.4556 in the classpath.
 
 ## Usage
 
