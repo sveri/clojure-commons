@@ -39,27 +39,6 @@
 
 
 ; inserts
-(defn get-or-create-entity
-  "Retrieves the id of an entity defined by it's key through it's value.
-  Entity has to be unique.
-  It still works if entity is not unique, but expect unexpected behavior then."
-  [db-conn part-id entity-key entity-val & [data-map]]
-  {:pre [(and (keyword? entity-key)(keyword? part-id))]}
-  (let [id (ffirst (find-by-attr-and-search-string (d/db db-conn) entity-key entity-val))]
-    (or id
-        (let [temp_id (d/tempid part-id)
-              transact-data (merge {:db/id temp_id entity-key entity-val} data-map)
-              tx @(d/transact db-conn [transact-data])]
-          (d/resolve-tempid (d/db db-conn) (:tempids tx) temp_id)))))
-
-(defn add-multi-ref-entity-to-entity
-  "Function to add refs to an entity.
-  Takes an additional data map for that ref and adds it to the new entity.
-  If entity exists already it remains unchanged."
-  [db-conn partition-id upsert-ref ref-key entity-key entity-val user-name & [data-map]]
-  (let [ex-id (get-or-create-entity db-conn partition-id entity-key entity-val data-map)]
-    @(d/transact db-conn [{:db/id [upsert-ref user-name] ref-key ex-id}])))
-
 (defn create-entity
   "Returns a vector that can be inserted into datomic. Adds a temporary :db/id to the given data-map."
   [partition-id data-map]
