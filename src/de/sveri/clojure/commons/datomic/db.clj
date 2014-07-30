@@ -11,11 +11,11 @@
 
 (defn find-by-attr-and-search-string [db-val attr search]
   (d/q '[:find ?c
-       :in $ ?attr ?name
-       :where [?c ?attr ?name]]
-     db-val
-     attr
-     search))
+         :in $ ?attr ?name
+         :where [?c ?attr ?name]]
+       db-val
+       attr
+       search))
 
 (defn find-all-from-column
   "Returns a list of entities. Expects a predefined query like this: `[:find ?e :where [?e ~username-kw]]"
@@ -31,11 +31,20 @@
   "Fetches the attribute identified by add-key
   from entity and puts it back into the map.
   Additionally the id of the entity is merged into the map"
-  [db-val entity add-key]
-  (let [entity-m (into {} entity)]
-    (assoc
-        (assoc entity-m add-key (map #(d/touch (d/entity db-val (:db/id %))) (seq (add-key entity-m))))
-      :db/id (:db/id entity))))
+  [db-val entity-m add-key]
+  (assoc entity-m add-key (mapv
+                            #(into {} (d/touch (d/entity db-val (:db/id %))))
+                            (seq (add-key entity-m)))))
+
+;(defn retrieve-additional-datoms
+;  "Fetches the attribute identified by add-key
+;  from entity and puts it back into the map.
+;  Additionally the id of the entity is merged into the map"
+;  [db-val entity add-key]
+;  (let [entity-m (into {} entity)]
+;    (assoc
+;         (assoc entity-m add-key (map #(into {} (d/touch (d/entity db-val (:db/id %)))) (seq (add-key entity-m))))
+;       :db/id (:db/id entity))))
 
 
 ; inserts
@@ -52,4 +61,4 @@
   @(d/transact db-conn data-map))
 
 (defn update-entity-by-id [db-conn id data-map]
-  @(d/transact db-conn [(merge {:db/id id } data-map)]))
+  @(d/transact db-conn [(merge {:db/id id} data-map)]))
