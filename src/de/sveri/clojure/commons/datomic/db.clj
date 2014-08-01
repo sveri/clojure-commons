@@ -35,18 +35,6 @@
   (assoc entity-m add-key (mapv
                             #(into {} (d/touch (d/entity db-val (:db/id %))))
                             (seq (add-key entity-m)))))
-
-;(defn retrieve-additional-datoms
-;  "Fetches the attribute identified by add-key
-;  from entity and puts it back into the map.
-;  Additionally the id of the entity is merged into the map"
-;  [db-val entity add-key]
-;  (let [entity-m (into {} entity)]
-;    (assoc
-;         (assoc entity-m add-key (map #(into {} (d/touch (d/entity db-val (:db/id %)))) (seq (add-key entity-m))))
-;       :db/id (:db/id entity))))
-
-
 ; inserts
 (defn create-entity
   "Returns a vector that can be inserted into datomic. Adds a temporary :db/id to the given data-map."
