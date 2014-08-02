@@ -35,6 +35,13 @@
   (assoc entity-m add-key (mapv
                             #(into {} (d/touch (d/entity db-val (:db/id %))))
                             (seq (add-key entity-m)))))
+
+(defn get-db-id-from-uuid
+  "Returns the :db/id that matches the given uuid. UUID must be of type java.util.UUID"
+  [db-val uuid-kw uuid]
+  (ffirst (find-by-attr-and-search-string db-val uuid-kw uuid)))
+
+
 ; inserts
 (defn create-entity
   "Returns a vector that can be inserted into datomic. Adds a temporary :db/id to the given data-map."
