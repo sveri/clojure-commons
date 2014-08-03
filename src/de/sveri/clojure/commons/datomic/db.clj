@@ -25,7 +25,7 @@
 (defn get-by-id-lazy-ref
   "Returns a datom by just touching it, every reference inside it will be kept by id."
   [db-val id]
-  (d/touch (d/entity db-val id)))
+  (when id (d/touch (d/entity db-val id))))
 
 (defn retrieve-additional-datoms
   "Fetches the attribute identified by add-key
@@ -33,8 +33,9 @@
   Additionally the id of the entity is merged into the map"
   [db-val entity-m add-key]
   (assoc entity-m add-key (mapv
-                            #(into {} (d/touch (d/entity db-val (:db/id %))))
-                            (seq (add-key entity-m)))))
+                            #(when (get % :db/id)
+                              (into {} (get-by-id-lazy-ref db-val (:db/id %))))
+                            (seq (get entity-m add-key)))))
 
 (defn get-db-id-from-uuid
   "Returns the :db/id that matches the given uuid. UUID must be of type java.util.UUID"
