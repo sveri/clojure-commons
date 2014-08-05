@@ -42,6 +42,8 @@
   [db-val uuid-kw uuid]
   (ffirst (find-by-attr-and-search-string db-val uuid-kw uuid)))
 
+(defn get-uuid-from-db-id [db-val uuid-kw id]
+  (uuid-kw (get-by-id-lazy-ref db-val id)))
 
 ; inserts
 (defn create-entity
