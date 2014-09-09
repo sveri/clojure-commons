@@ -17,6 +17,28 @@
        (d/entid db-val attr)
        search))
 
+(defn get-refs-from-entity
+  "Searches all references from an entity.
+  For instance, all events that belong to a user would translate to this:
+  (d/q '[:find ?events
+       :in $ ?email
+       :where [?user :user/email ?email]
+              [?events :event/user ?user]]
+     db
+     \"editor@example.com\")
+
+     =>
+  (get-refs-from-entity db-val :event/user :user/email \"editor@example.com\")"
+  [db-val entity-key ref-key ref-name]
+  (d/q '[:find ?ref
+         :in $ ?ref-key-var ?ref-var ?entity-var
+         :where [?user ?ref-key-var ?ref-var]
+         [?ref ?entity-var ?user]]
+       db-val
+       ref-key
+       ref-name
+       entity-key))
+
 (defn find-all-from-column
   "Returns a list of entities. Expects a predefined query like this: `[:find ?e :where [?e ~username-kw]]"
   [db-val column-query]
