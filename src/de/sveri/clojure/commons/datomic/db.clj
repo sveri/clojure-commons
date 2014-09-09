@@ -14,7 +14,7 @@
          :in $ ?attr ?name
          :where [?c ?attr ?name]]
        db-val
-       attr
+       (d/entid db-val attr)
        search))
 
 (defn find-all-from-column
