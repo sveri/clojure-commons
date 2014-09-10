@@ -80,5 +80,14 @@
   {:pre [(some? (:db/id (first data-map)))]}
   @(d/transact db-conn data-map))
 
+(defn insert-data-map
+  "Generates a temporary id and adds it to the data-map.
+  Returns the database id generated for that new datom."
+  [db-conn partition-id data-map]
+  (let [temp_id (d/tempid partition-id)
+        succ-tx (insert-entity db-conn [(merge {:db/id temp_id} data-map)])]
+    (d/resolve-tempid (d/db db-conn) (:tempids succ-tx) temp_id)))
+
+
 (defn update-entity-by-id [db-conn id data-map]
   @(d/transact db-conn [(merge {:db/id id} data-map)]))
