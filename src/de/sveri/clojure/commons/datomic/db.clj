@@ -49,6 +49,13 @@
   [db-val id]
   (when id (d/touch (d/entity db-val id))))
 
+(defn touch-ref-for-entities
+  "Realizes a reference from the entity in the entities list"
+  [db-val ref-key entities]
+  (let [get-by-id (fn [c] (into {} (get-by-id-lazy-ref db-val (get c :db/id))))
+        update-vals (fn [value xs] (map #(update-in (into {} %) [value] get-by-id) xs))]
+    (update-vals ref-key entities)))
+
 (defn retrieve-additional-datoms
   "Fetches the attribute identified by add-key
   from entity and puts it back into the map.
