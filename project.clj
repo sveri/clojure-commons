@@ -1,4 +1,4 @@
-(defproject de.sveri/clojure-commons "0.1.5"
+(defproject de.sveri/clojure-commons "0.1.6"
   :description "A clojure helper library for my personal projects."
   :url "https://github.com/sveri/clojure-commons"
   :license {:name "Eclipse Public License"
