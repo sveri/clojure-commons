@@ -39,15 +39,29 @@
        ref-name
        entity-key))
 
-(defn find-all-from-column
-  "Returns a list of entities. Expects a predefined query like this: `[:find ?e :where [?e ~username-kw]]"
-  [db-val column-query]
-  (d/q column-query db-val))
+(defn get-db-id-from-uuid
+  "Returns the :db/id that matches the given uuid. UUID must be of type java.util.UUID"
+  [db-val uuid-kw uuid]
+  (ffirst (find-by-attr-and-search-string db-val uuid-kw uuid)))
 
 (defn get-by-id-lazy-ref
   "Returns a datom by just touching it, every reference inside it will be kept by id."
   [db-val id]
   (when id (d/touch (d/entity db-val id))))
+
+(defn find-all-from-column
+  "Returns a list of entities. Expects a predefined query like this: `[:find ?e :where [?e ~username-kw]]
+  If touch is not nil, this function will return a list of touched entities instead"
+  [db-val column-query & [touch]]
+  (let [res (d/q column-query db-val)]
+    (if touch (mapv #(get-by-id-lazy-ref db-val (first %)) res)
+              res)))
+
+(defn get-by-uuid-lazy-ref
+  "Returns a datom by just touching it, every reference inside it will be kept by id."
+  [db-val uuid-kw uuid]
+  (when uuid (let [db-id (get-db-id-from-uuid db-val uuid-kw uuid)]
+               (d/touch (d/entity db-val db-id)))))
 
 (defn touch-ref-for-entities
   "Realizes a reference from the entity in the entities list"
@@ -65,11 +79,6 @@
                             #(when (get % :db/id)
                               (into {} (get-by-id-lazy-ref db-val (:db/id %))))
                             (seq (get entity-m add-key)))))
-
-(defn get-db-id-from-uuid
-  "Returns the :db/id that matches the given uuid. UUID must be of type java.util.UUID"
-  [db-val uuid-kw uuid]
-  (ffirst (find-by-attr-and-search-string db-val uuid-kw uuid)))
 
 (defn get-uuid-from-db-id [db-val uuid-kw id]
   (uuid-kw (get-by-id-lazy-ref db-val id)))
