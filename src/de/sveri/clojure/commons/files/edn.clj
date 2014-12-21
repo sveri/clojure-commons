@@ -1,8 +1,10 @@
 (ns de.sveri.clojure.commons.files.edn
-  (:import (java.io PushbackReader))
+  ;(:import (java.io PushbackReader))
   (:require [clojure.java.io :as io]
-            [clojure.edn :as edn]))
+            ;[clojure.edn :as edn]
+            ))
 
-(defn from-edn [fname]
+(defn from-edn
   "reads an edn file from classpath"
-  (read-string (slurp (clojure.java.io/resource fname))))
+  [fname]
+  (read-string (slurp (io/resource fname))))
