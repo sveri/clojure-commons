@@ -4,10 +4,12 @@
 
 
 (defn error->string [e]
-  (let [sw (new StringWriter)
-        pw (new PrintWriter sw)
-        e-string (.printStackTrace e pw)]
-    (.toString sw)))
+  (if (instance? Exception e)
+    (let [sw (new StringWriter)
+          pw (new PrintWriter sw)
+          e-string (.printStackTrace e pw)]
+      (.toString sw))
+    e))
 
 
 
